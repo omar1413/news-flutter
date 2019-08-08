@@ -4,10 +4,9 @@ import 'package:path_provider/path_provider.dart';
 import 'dart:io';
 import 'dart:async';
 import '../models/item_model.dart';
-import 'source.dart';
-import 'cache.dart';
+import 'cache_source.dart';
 
-class NewsDbProvider implements Source, Cache {
+class NewsDbProvider implements CacheSource {
   Database db;
 
   static const _TABLE_NAME = 'Items';
