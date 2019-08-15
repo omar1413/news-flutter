@@ -26,24 +26,39 @@ class NewsList extends StatelessWidget {
             child: CircularProgressIndicator(),
           );
         }
-        return ListView.builder(
-          itemCount: snapshot.data.length,
-          itemBuilder: (context, index) {
-            return FutureBuilder<ItemModel>(
-              future: bloc.getItem(snapshot.data[index]),
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  return Container(
-                    height: 80,
-                    child: Text(snapshot.data.title),
-                  );
-                }
-                return Container(height: 80, child: Text('hello'));
-              },
-            );
+
+        return buildListView(bloc, snapshot.data);
+      },
+    );
+  }
+
+  buildListView(StoriesBlock bloc, List<int> data) {
+    return ListView.builder(
+      itemCount: data.length,
+      itemBuilder: (context, index) {
+        return FutureBuilder<ItemModel>(
+          future: bloc.getItem(data[index]),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return buildListTile(snapshot.data);
+            }
+            return Container(height: 80, child: Text('hello'));
           },
         );
       },
+    );
+  }
+
+  buildListTile(ItemModel item) {
+    return ListTile(
+      title: Text(item.title),
+      subtitle: Text('${item.score} Points'),
+      trailing: Column(
+        children: <Widget>[
+          Icon(Icons.comment),
+          Text('${item.descendants}'),
+        ],
+      ),
     );
   }
 }
