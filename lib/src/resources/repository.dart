@@ -68,6 +68,7 @@ class Repository {
   Future<ItemModel> getItemFromApi(int id) async {
     for (var api in apis) {
       final item = await api.fetchItem(id);
+
       if (item != null) {
         return item;
       }

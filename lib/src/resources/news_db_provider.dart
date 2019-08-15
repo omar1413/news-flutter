@@ -25,16 +25,21 @@ class NewsDbProvider implements CacheSource {
   static const _TITLE_COLUMN = 'title';
   static const _DESCENDANTS_COLUMN = 'descendants';
 
-  init() async {
-    Directory documentsDirectory = await getApplicationDocumentsDirectory();
-    final path = join(documentsDirectory.path, 'items.db');
+  NewsDbProvider() {
+    init();
+  }
 
-    db = await openDatabase(
-      path,
-      version: 1,
-      onCreate: (newDb, version) {
-        newDb.execute('''
-          CRAETE TABLE $_TABLE_NAME
+  init() async {
+    try {
+      Directory documentsDirectory = await getApplicationDocumentsDirectory();
+      final path = join(documentsDirectory.path, 'items.db');
+
+      db = await openDatabase(
+        path,
+        version: 1,
+        onCreate: (newDb, version) {
+          newDb.execute('''
+          CREATE TABLE $_TABLE_NAME
             (
               $_ID_COLUMN INTEGER PRIMARY KEY,
               $_TYPE_COLUMN TEXT,
@@ -51,20 +56,26 @@ class NewsDbProvider implements CacheSource {
               $_DESCENDANTS_COLUMN INTEGER
             )
         ''');
-      },
-    );
+        },
+      );
+    } catch (e) {
+      print(e);
+    }
   }
 
   @override
   Future<ItemModel> fetchItem(int id) async {
-    final maps = await db.query(
-      _TABLE_NAME,
-      where: '$_ID_COLUMN = ?',
-      whereArgs: [id],
-    );
-
-    if (maps.length > 0) {
-      return ItemModel.fromDb(maps[0]);
+    try {
+      final maps = await db.query(
+        _TABLE_NAME,
+        where: '$_ID_COLUMN = ?',
+        whereArgs: [id],
+      );
+      if (maps.length > 0) {
+        return ItemModel.fromDb(maps[0]);
+      }
+    } catch (e) {
+      print(e);
     }
 
     return null;
@@ -72,7 +83,13 @@ class NewsDbProvider implements CacheSource {
 
   @override
   Future<int> addItem(ItemModel item) {
-    return db.insert(_TABLE_NAME, item.toMapForDb());
+    try {
+      return db.insert(_TABLE_NAME, item.toMapForDb());
+    } catch (e) {
+      print(e);
+    }
+
+    return null;
   }
 
   @override

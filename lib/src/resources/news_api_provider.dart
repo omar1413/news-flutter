@@ -18,6 +18,7 @@ class NewsApiProvider implements ApiSource {
 
   @override
   Future<ItemModel> fetchItem(int id) async {
+    print('get item');
     final response = await client.get('$_root/item/$id.json');
     final parsedJson = json.decode(response.body);
 
