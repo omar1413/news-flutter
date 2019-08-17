@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../blocs/stories_povider.dart';
 import '../models/item_model.dart';
+import '../widgets/loading_container.dart';
+import '../widgets/refresh.dart';
 
 class NewsList extends StatelessWidget {
   @override
@@ -33,32 +35,42 @@ class NewsList extends StatelessWidget {
   }
 
   buildListView(StoriesBlock bloc, List<int> data) {
-    return ListView.builder(
-      itemCount: data.length,
-      itemBuilder: (context, index) {
-        return FutureBuilder<ItemModel>(
-          future: bloc.getItem(data[index]),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              return buildListTile(snapshot.data);
-            }
-            return Container(height: 80, child: Text('hello'));
-          },
-        );
-      },
+    return Refresh(
+      child: ListView.builder(
+        itemCount: data.length,
+        itemBuilder: (context, index) {
+          print(index);
+          return FutureBuilder<ItemModel>(
+            future: bloc.getItem(data[index]),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return buildListTile(snapshot.data);
+              }
+              return LoadingContainer();
+            },
+          );
+        },
+      ),
     );
   }
 
   buildListTile(ItemModel item) {
-    return ListTile(
-      title: Text(item.title),
-      subtitle: Text('${item.score} Points'),
-      trailing: Column(
-        children: <Widget>[
-          Icon(Icons.comment),
-          Text('${item.descendants}'),
-        ],
-      ),
+    return Column(
+      children: <Widget>[
+        ListTile(
+          title: Text(item.title),
+          subtitle: Text('${item.score} Points'),
+          trailing: Column(
+            children: <Widget>[
+              Icon(Icons.comment),
+              Text('${item.descendants}'),
+            ],
+          ),
+        ),
+        Divider(
+          height: 8.0,
+        ),
+      ],
     );
   }
 }

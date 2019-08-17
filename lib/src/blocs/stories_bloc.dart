@@ -17,6 +17,10 @@ class StoriesBlock {
     return _repository.fetchItem(id);
   }
 
+  Future<void> clear() {
+    return _repository.clear();
+  }
+
   dispose() {
     _topIds.close();
   }

@@ -9,7 +9,7 @@ import 'cache_source.dart';
 class NewsDbProvider implements CacheSource {
   Database db;
 
-  static const _TABLE_NAME = 'Items';
+  static const _ITEMS_TABLE = 'Items';
 
   static const _ID_COLUMN = 'id';
   static const _TYPE_COLUMN = 'type';
@@ -39,7 +39,7 @@ class NewsDbProvider implements CacheSource {
         version: 1,
         onCreate: (newDb, version) {
           newDb.execute('''
-          CREATE TABLE $_TABLE_NAME
+          CREATE TABLE $_ITEMS_TABLE
             (
               $_ID_COLUMN INTEGER PRIMARY KEY,
               $_TYPE_COLUMN TEXT,
@@ -67,7 +67,7 @@ class NewsDbProvider implements CacheSource {
   Future<ItemModel> fetchItem(int id) async {
     try {
       final maps = await db.query(
-        _TABLE_NAME,
+        _ITEMS_TABLE,
         where: '$_ID_COLUMN = ?',
         whereArgs: [id],
       );
@@ -84,7 +84,7 @@ class NewsDbProvider implements CacheSource {
   @override
   Future<int> addItem(ItemModel item) {
     try {
-      return db.insert(_TABLE_NAME, item.toMapForDb());
+      return db.insert(_ITEMS_TABLE, item.toMapForDb());
     } catch (e) {
       print(e);
     }
@@ -96,6 +96,10 @@ class NewsDbProvider implements CacheSource {
   Future<List<int>> fetchTopIds() {
     // TODO: implement fetchTopIds
     return null;
+  }
+
+  Future<int> clear() {
+    return db.delete(_ITEMS_TABLE);
   }
 }
 
