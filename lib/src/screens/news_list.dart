@@ -3,6 +3,7 @@ import '../blocs/stories_povider.dart';
 import '../models/item_model.dart';
 import '../widgets/loading_container.dart';
 import '../widgets/refresh.dart';
+import '../widgets/news_list_tile.dart';
 
 class NewsList extends StatelessWidget {
   @override
@@ -44,33 +45,13 @@ class NewsList extends StatelessWidget {
             future: bloc.getItem(data[index]),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
-                return buildListTile(snapshot.data);
+                return NewsListTile(item: snapshot.data);
               }
               return LoadingContainer();
             },
           );
         },
       ),
-    );
-  }
-
-  buildListTile(ItemModel item) {
-    return Column(
-      children: <Widget>[
-        ListTile(
-          title: Text(item.title),
-          subtitle: Text('${item.score} Points'),
-          trailing: Column(
-            children: <Widget>[
-              Icon(Icons.comment),
-              Text('${item.descendants}'),
-            ],
-          ),
-        ),
-        Divider(
-          height: 8.0,
-        ),
-      ],
     );
   }
 }
